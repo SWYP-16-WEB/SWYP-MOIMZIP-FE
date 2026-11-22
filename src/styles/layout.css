@@ -2,6 +2,7 @@
   /* 1rem = 10px */
   html {
     font-size: 62.5%;
+    background-color: var(--color-bg-primary);
   }
 
   html,
@@ -17,5 +18,20 @@
     font-size: 1.6rem;
     line-height: 1.5;
     letter-spacing: 0;
+    color: var(--color-text-white);
+  }
+
+  /*
+   * 전 화면 공통 배경의 그라디언트 빛 (Figma layout 프레임)
+   * 스크롤과 관계없이 화면 중앙에 고정한다. iOS Safari는 background-attachment: fixed를
+   * 지원하지 않으므로 fixed 위치의 가상 요소로 배치한다.
+   */
+  body::before {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    content: '';
+    background: url('/images/background-glow.svg') center / 107.3rem 82.7rem no-repeat;
   }
 }

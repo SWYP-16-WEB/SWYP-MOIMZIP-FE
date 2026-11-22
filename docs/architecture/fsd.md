@@ -10,8 +10,13 @@ src/
 ├── entities/                    # 도메인 데이터와 표시 UI (이벤트, 참석 응답, 사용자)
 └── shared/                      # 도메인과 무관한 재사용 코드
     ├── api/                     # 공통 HTTP 클라이언트 및 API 설정
+    ├── assets/                  # 정적 자원
+    │   ├── svg/                 # 원본 SVG (직접 추가)
+    │   ├── icons/               # SVGR 생성 아이콘 컴포넌트 (자동 생성)
+    │   └── index.ts             # 아이콘 barrel (자동 생성)
     ├── config/                  # 환경·상수 설정
-    ├── ui/                      # 공통 UI 컴포넌트
+    ├── layout/                  # 공통 레이아웃 컴포넌트 (barrel 자동 생성)
+    ├── ui/                      # 공통 UI 컴포넌트 (barrel 자동 생성)
     └── utils/                   # 공통 유틸리티
 ```
 
