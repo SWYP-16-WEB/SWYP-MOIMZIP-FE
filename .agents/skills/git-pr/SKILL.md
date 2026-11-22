@@ -23,7 +23,9 @@ description: 이 저장소에서 PR 제목과 본문을 작성하거나, 리뷰�
 ## 해야 할 일
 
 1. 변경 범위를 확인합니다. PR 대상은 `develop`입니다.
-   - `git log develop..HEAD --oneline`, `git diff develop...HEAD --stat`으로 PR에 들어갈 커밋과 파일을 확인하고, 필요한 파일은 diff를 읽습니다.
+   - 로컬 `develop`은 없거나 오래되었을 수 있습니다. 그러면 이미 대상 브랜치에 들어간 커밋까지 PR 변경으로 보입니다. 먼저 `git fetch origin develop`으로 최신 원격 브랜치를 가져오고, 원격 ref를 기준으로 비교합니다.
+   - `git log origin/develop..HEAD --oneline`, `git diff origin/develop...HEAD --stat`으로 PR에 들어갈 커밋과 파일을 확인하고, 필요한 파일은 diff를 읽습니다.
+   - 사용자가 다른 대상 브랜치를 지정하면 같은 방식으로 그 원격 ref(`origin/<대상>`)를 기준으로 비교합니다.
    - 커밋되지 않은 변경이 있으면 PR에 포함되지 않는다고 알리고, 본문에 넣을지 묻습니다. 본문과 실제 PR 내용이 어긋나지 않게 합니다.
    - 연관 이슈 번호는 브랜치 이름(`{접두사}/#{이슈}/{작업}`)에서 가져옵니다.
 2. 제목은 `[접두사] 작업 내용` 형식으로, 접두사는 커밋 접두사의 첫 글자만 대문자로 씁니다.
