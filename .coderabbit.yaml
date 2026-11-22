@@ -44,12 +44,13 @@ reviews:
       instructions: |
         프로젝트 기준:
         - TypeScript / Next.js App Router / Tailwind CSS, 실제 서버 연동 전제
-        - 현재 구조: src/app + src/views + src/shared
-        - 의존 방향: app → views → shared (상위에서 하위 직접 참조 가능)
+        - 현재 구조: src/app + src/views + src/features + src/entities + src/shared
+        - 의존 방향: app → views → features → entities → shared (상위에서 하위 직접 참조 가능)
         - 같은 레이어의 다른 슬라이스 직접 참조 금지 (app·shared 내부는 슬라이스 규칙 제외)
         - 공통화: 사용 횟수보다 역할·변경 이유 기준, 모양만 비슷한 코드의 조기 추상화 지양
-        - entities·features·widgets: 실제 코드와 분리 필요성이 있을 때 PR 리뷰 후 추가
-        - 레이어 추가 PR: 기존 문제·분리 책임·사용 위치 명시, 빈 폴더 선생성 금지
+        - widgets: 실제 코드와 분리 필요성이 있을 때 PR 리뷰 후 추가
+        - 레이어 추가 PR: 기존 문제·분리 책임·사용 위치 명시
+        - 슬라이스 폴더는 실제 코드와 함께 생성, 빈 슬라이스 선생성 금지 (배치 기준: docs/architecture/fsd.md)
         - index.ts public API: 공개 경계가 필요한 단위에 적용, 모든 폴더에 강제 금지
 
     - path: 'src/app/**'
@@ -72,17 +73,17 @@ reviews:
         - 도메인과 무관한 UI·유틸·설정·통신 기반 코드만 배치
         - api: 공통 요청·응답 및 오류 처리, 도메인 전용 로직 제외
         - config: 공통 설정 / ui: 범용 UI / utils: 범용 함수
-        - app·views 및 향후 상위 레이어 참조 금지
+        - app·views·features·entities 등 상위 레이어 참조 금지
 
     - path: 'src/entities/**'
       instructions: |
-        향후 도입 시:
-        - 여러 화면에서 공유할 도메인 데이터·관련 로직 배치
+        도메인 코드 리뷰 시:
+        - 여러 화면에서 공유할 도메인 데이터·관련 로직 배치 (타입, API, query key, 도메인 판단, 데이터 표시 UI)
         - shared 참조 허용, 다른 entities 슬라이스·상위 레이어 직접 참조 금지
 
     - path: 'src/features/**'
       instructions: |
-        향후 도입 시:
+        사용자 행동 코드 리뷰 시:
         - 재사용·책임 분리가 필요한 사용자 행동 로직 배치
         - 새 사용자 행동만으로 분리하지 않고 필요성 확인
         - entities·shared 참조 허용, 다른 features 슬라이스·상위 레이어 직접 참조 금지

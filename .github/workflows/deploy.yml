@@ -17,7 +17,7 @@ jobs:
   sync:
     name: Sync forked repo
     # fork 저장소에서는 이 워크플로우가 다시 실행되지 않도록 원본 저장소에서만 실행합니다.
-    if: github.repository == 'SWYP-16-WEB/SWYP-INVITE-FE'
+    if: github.repository == 'SWYP-16-WEB/SWYP-MOIMZIP-FE'
     runs-on: ubuntu-latest
 
     steps:
@@ -31,4 +31,4 @@ jobs:
       - name: Push main to forked repo
         env:
           TOKEN: ${{ secrets.AUTO_ACTIONS }}
-        run: git push -f "https://x-access-token:${TOKEN}@github.com/seunghye-rain/SWYP-INVITE-FE.git" main
+        run: git push -f "https://x-access-token:${TOKEN}@github.com/seunghye-rain/SWYP-MOIMZIP-FE.git" main

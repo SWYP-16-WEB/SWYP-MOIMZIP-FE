@@ -17,16 +17,16 @@
 
 [`dev-convention.md`](./dev-convention.md)의 규칙 중 정적 분석이 가능한 것을 강제합니다.
 
-| 규칙                               | 근거                                                 |
-| ---------------------------------- | ---------------------------------------------------- |
-| `no-var`, `prefer-const`           | `var` 금지, `const` 기본 사용                        |
-| `prefer-template`                  | 문자열 조합은 템플릿 리터럴만 사용                   |
-| `react/jsx-pascal-case`            | 컴포넌트는 파스칼 케이스                             |
-| `react/button-has-type`            | `button` 태그에 `type` 명시                          |
-| `react/no-array-index-key` (warn)  | `map`의 `key`는 index 대신 고유한 값                 |
-| `import/no-default-export`         | named export 사용 (Next.js 특수 파일·설정 파일 예외) |
-| `no-restricted-imports`            | `../../` 이상 상대 경로 금지 → `@/` 사용             |
-| `no-restricted-imports` (레이어별) | 의존 방향 `app → views → shared` 역참조 금지         |
+| 규칙                               | 근거                                                               |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| `no-var`, `prefer-const`           | `var` 금지, `const` 기본 사용                                      |
+| `prefer-template`                  | 문자열 조합은 템플릿 리터럴만 사용                                 |
+| `react/jsx-pascal-case`            | 컴포넌트는 파스칼 케이스                                           |
+| `react/button-has-type`            | `button` 태그에 `type` 명시                                        |
+| `react/no-array-index-key` (warn)  | `map`의 `key`는 index 대신 고유한 값                               |
+| `import/no-default-export`         | named export 사용 (Next.js 특수 파일·설정 파일 예외)               |
+| `no-restricted-imports`            | `../../` 이상 상대 경로 금지 → `@/` 사용                           |
+| `no-restricted-imports` (레이어별) | 의존 방향 `app → views → features → entities → shared` 역참조 금지 |
 
 그 외 추가 규칙:
 

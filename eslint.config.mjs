@@ -11,6 +11,13 @@ const relativeImportPattern = {
   message: '2단계 이상 상위 경로 대신 절대 경로(@/)를 사용하세요.',
 };
 
+// 각 레이어가 참조할 수 없는 상위 레이어 (docs/architecture/fsd.md > 의존성 규칙)
+const LAYER_ORDER = ['app', 'views', 'features', 'entities', 'shared'];
+const layerBoundaries = LAYER_ORDER.slice(1).map((layer, index) => ({
+  layer,
+  upperLayers: LAYER_ORDER.slice(0, index + 1),
+}));
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -79,23 +86,9 @@ const eslintConfig = defineConfig([
     },
   },
 
-  // 레이어 의존 방향: app -> views -> shared (docs/architecture/fsd.md)
-  {
-    files: ['src/views/**'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            relativeImportPattern,
-            { group: ['@/app', '@/app/*'], message: 'views에서 app 레이어를 참조할 수 없습니다.' },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ['src/shared/**'],
+  // 레이어 의존 방향: app -> views -> features -> entities -> shared (docs/architecture/fsd.md)
+  ...layerBoundaries.map(({ layer, upperLayers }) => ({
+    files: [`src/${layer}/**`],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -103,14 +96,14 @@ const eslintConfig = defineConfig([
           patterns: [
             relativeImportPattern,
             {
-              group: ['@/app', '@/app/*', '@/views', '@/views/*'],
-              message: 'shared에서 상위 레이어(app, views)를 참조할 수 없습니다.',
+              group: upperLayers.flatMap((upperLayer) => [`@/${upperLayer}`, `@/${upperLayer}/*`]),
+              message: `${layer}에서 상위 레이어(${upperLayers.join(', ')})를 참조할 수 없습니다.`,
             },
           ],
         },
       ],
     },
-  },
+  })),
 
   prettierConfig,
   // Override default ignores of eslint-config-next.
