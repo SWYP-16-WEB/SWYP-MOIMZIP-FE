@@ -72,7 +72,7 @@ entities/event/
 | `entities` | `user`             | 로그인 사용자 정보 조회, 회원 여부                                                                                                           | 1-1, 3-3, 4-1, 5-x                          |
 | `features` | `auth`             | 카카오 로그인(버튼 포함), 로그아웃, 로그인 결과 처리                                                                                         | 1-5, 3-3, 5-3                               |
 | `features` | `create-event`     | 생성 플로우 임시 데이터 (유형 → 기본 정보 → 체크리스트 → 미리보기 → 리마인드)                                                                | 3-1 ~ 3-4, 7-1, 2-3                         |
-| `features` | `set-reminder`     | 리마인드 폼과 검증 (저장 방식은 사용하는 화면에서 주입)                                                                                      | 2-3 (3-4, 4-2에서 진입)                     |
+| `features` | `set-reminder`     | 리마인드 폼과 검증 (저장 방식은 상위 `views`에서 `onSubmit`으로 연결)                                                                        | 2-3 (3-4, 4-2에서 진입)                     |
 | `features` | `share-invitation` | 공유 URL 복사, 카카오톡 공유                                                                                                                 | 4-1, 6-1                                    |
 
 - 진행 중인 이벤트 상세(1-4)와 초대장 수정(6-1)은 디자인 시안에서 하나의 화면으로 통합되었습니다. 접속자 권한(주최자/참여자)에 따라 하단 버튼을 분기하는 `views` 슬라이스 하나로 구현합니다. 완료된 이벤트(1-3)는 별도 슬라이스로 둡니다.
@@ -80,6 +80,30 @@ entities/event/
 - 한 화면에서만 쓰이는 UI는 `views` 슬라이스 내부에 둡니다. (유형 타일(3-1), 준비 옵션 카드(3-3), 체크리스트 항목·원형 진행률·항목 바텀시트(7-1 ~ 7-3))
 - 참석/불참 응답 제출(기기별 응답 기록, 중복 제출 방지 포함)은 2-1에서만 쓰이므로 `views` 슬라이스 내부에 둡니다. 다른 화면에서 응답 기능이 필요해지면 `features`로 옮깁니다.
 - 회원 화면(5-1, 5-2)의 하단 탭바는 회원 전용 route group의 `layout.tsx`에서 배치합니다.
+
+### 리마인드 저장 방식 연결 (feature 간 의존 방지)
+
+리마인드 폼(`features/set-reminder`)은 진입 경로에 따라 저장 방식이 다릅니다. 생성 중(3-4에서 진입)에는 이벤트가 아직 DB에 없어 `features/create-event`의 임시 데이터를 갱신하고, 생성 후(4-2에서 진입)에는 API로 바로 저장합니다.
+
+이때 `set-reminder`가 `create-event`를 직접 import하면 같은 레이어의 슬라이스 간 참조가 되어 의존성 규칙을 위반합니다. 그래서 `set-reminder`는 폼 UI·검증만 담당하고 저장 동작은 `onSubmit`으로 받으며, 두 feature를 함께 import할 수 있는 상위 `views`에서 `onSubmit`을 연결합니다.
+
+| 진입 경로     | `onSubmit`에 연결하는 동작                      | 연결 위치 |
+| ------------- | ----------------------------------------------- | --------- |
+| 생성 중 (3-4) | `features/create-event`의 임시 데이터 갱신      | `views`   |
+| 생성 후 (4-2) | `entities/event`(또는 리마인드 API)의 저장 요청 | `views`   |
+
+```tsx
+// views 슬라이스에서 두 feature를 조합 (예시, 실제 이름은 구현 시 확정)
+import { useCreateEventDraft } from '@/features/create-event';
+import { ReminderForm } from '@/features/set-reminder';
+
+const { setReminder } = useCreateEventDraft();
+
+<ReminderForm onSubmit={setReminder} />;
+```
+
+- `features/set-reminder` 내부에서 `@/features/create-event`를 import하지 않습니다.
+- 같은 방식으로, 여러 feature를 함께 써야 하는 동작은 feature끼리 참조하지 않고 상위 `views`에서 조합합니다.
 
 ### `shared/ui` 후보
 
