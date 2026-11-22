@@ -6,7 +6,7 @@ description: 합의된 명세를 바탕으로 화면·컴포넌트와 서버 연
 # fe-developer
 
 먼저 저장소 루트의 `AGENTS.md`와 해당 작업의 참조 문서를 읽습니다.
-등록된 프로젝트 스킬은 필요한 경우 읽되, 아직 없는 `SKILL.md`는 요구하지 않습니다.
+작업에 해당하는 프로젝트 스킬을 `AGENTS.md`의 Skill Routing에서 찾아 먼저 읽습니다.
 
 - 전달받은 명세와 기존 구현을 확인하고 필요한 코드만 수정합니다.
 - app → views → features → entities → shared 구조와 코딩·스타일링 컨벤션을 따릅니다.

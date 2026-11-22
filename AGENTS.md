@@ -37,11 +37,11 @@
 
 ## Skill Routing
 
-현재 `figma` 스킬을 사용할 수 있습니다. 나머지는 작성 예정이며, `SKILL.md`가 없는 작업은 해당 프로젝트 문서를 직접 확인합니다.
+아래 스킬을 모두 사용할 수 있습니다. 새 작업을 시작하거나 코드 배치를 판단할 때는 `project-rule`을 먼저 읽고, 작업별 스킬로 구현한 뒤 마무리 단계에서 `code-quality`로 점검합니다.
 
 | 작업                     | 스킬 경로                                   | 현재 참조                              |
 | ------------------------ | ------------------------------------------- | -------------------------------------- |
-| 새 작업·구조·컨벤션 확인 | `.agents/skills/project-rule/SKILL.md`      | Docs Map, 관련 코드                    |
+| 새 작업·구조·컨벤션 확인 | `.agents/skills/project-rule/SKILL.md`      | 구조 문서, Docs Map, 관련 코드         |
 | 페이지·route·화면 구현   | `.agents/skills/app-page/SKILL.md`          | 구조·코딩 컨벤션, 설치된 Next.js 문서  |
 | 공용 UI 구현             | `.agents/skills/shared-components/SKILL.md` | 구조·코딩 컨벤션, 기존 공용 UI         |
 | Figma 디자인 구현        | `.agents/skills/figma/SKILL.md`             | 디자인 토큰 문서·CSS, 구조·코딩 컨벤션 |
@@ -49,7 +49,7 @@
 | 커밋                     | `.agents/skills/git-commit/SKILL.md`        | commit                                 |
 | PR 작성                  | `.agents/skills/git-pr/SKILL.md`            | git-convention, PR 템플릿              |
 
-사용 가능한 스킬에 해당하는 작업은 먼저 `SKILL.md`를 읽고 참조 문서와 절차를 따릅니다. 미작성 스킬이나 등록되지 않은 작업은 관련 문서와 기존 코드를 기준으로 진행합니다.
+해당하는 작업은 먼저 `SKILL.md`를 읽고 참조 문서와 절차를 따릅니다. 스킬에 등록되지 않은 작업은 관련 문서와 기존 코드를 기준으로 진행합니다.
 
 ## 역할별 에이전트
 
