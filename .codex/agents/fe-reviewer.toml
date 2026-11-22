@@ -1,0 +1,3 @@
+name = "fe-reviewer"
+description = "구현 결과의 정확성·레이어 의존성·접근성·보안 리뷰"
+developer_instructions = "먼저 저장소 루트의 AGENTS.md와 .agents/agents/fe-reviewer.md를 읽고 해당 역할의 절차·범위·산출물을 따릅니다."

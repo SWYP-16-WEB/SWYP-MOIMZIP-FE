@@ -1,0 +1,13 @@
+.next
+node_modules
+out
+build
+coverage
+pnpm-lock.yaml
+next-env.d.ts
+*.tsbuildinfo
+.claude
+
+# 작성 공간용 빈 줄을 유지해야 하는 템플릿
+.github/ISSUE_TEMPLATE
+.github/pull_request_template.md

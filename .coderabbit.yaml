@@ -1,0 +1,273 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# 기본 설정
+language: ko-KR
+early_access: false
+tone_instructions: |
+  - 각 리뷰 코멘트는 500자 이내의 한국어로 작성
+  - 동료 개발자처럼 문제·원인·수정 방향을 구체적으로 제안
+  - 필요한 경우 공식 문서 링크 첨부, 중복 설명·취향성 지적 생략
+  - 리뷰 지적과 개선 제안에 구체적인 근거 제시
+  - 유지보수성·성능·보안을 고려하여 검토
+
+# 리뷰 설정
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  changed_files_summary: true
+  collapse_walkthrough: true
+  sequence_diagrams: false
+  assess_linked_issues: true
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  poem: false
+
+  # 생성물 제외 (소스·문서·lockfile 포함)
+  path_filters:
+    - '!**/node_modules/**'
+    - '!**/.next/**'
+    - '!**/out/**'
+    - '!**/dist/**'
+    - '!**/coverage/**'
+    - '!**/*.tsbuildinfo'
+    - '!**/next-env.d.ts'
+    - '!.husky/_/**'
+
+  # 경로별 리뷰 기준
+  path_instructions:
+    - path: '**/*'
+      instructions: |
+        프로젝트 기준:
+        - TypeScript / Next.js App Router / Tailwind CSS, 실제 서버 연동 전제
+        - 현재 구조: src/app + src/views + src/features + src/entities + src/shared
+        - 의존 방향: app → views → features → entities → shared (상위에서 하위 직접 참조 가능)
+        - 같은 레이어의 다른 슬라이스 직접 참조 금지 (app·shared 내부는 슬라이스 규칙 제외)
+        - 공통화: 사용 횟수보다 역할·변경 이유 기준, 모양만 비슷한 코드의 조기 추상화 지양
+        - widgets: 실제 코드와 분리 필요성이 있을 때 PR 리뷰 후 추가
+        - 레이어 추가 PR: 기존 문제·분리 책임·사용 위치 명시
+        - 슬라이스 폴더는 실제 코드와 함께 생성, 빈 슬라이스 선생성 금지 (배치 기준: docs/architecture/fsd.md)
+        - index.ts public API: 공개 경계가 필요한 단위에 적용, 모든 폴더에 강제 금지
+
+    - path: 'src/app/**'
+      instructions: |
+        라우팅 리뷰 시:
+        - 라우트·레이아웃·전역 프로바이더 구성 확인
+        - page.tsx는 라우팅·화면 연결 중심, 화면 구현은 views에 배치
+        - Server / Client 경계 및 서버 전용 코드·비밀값의 클라이언트 노출 확인
+
+    - path: 'src/views/**'
+      instructions: |
+        화면 리뷰 시:
+        - 화면 전용 컴포넌트·훅·유틸은 해당 화면 폴더 내부 배치
+        - 다른 화면 폴더 직접 import 금지
+        - 서버 연동의 로딩·오류·빈 결과·중복 제출 처리 확인
+
+    - path: 'src/shared/**'
+      instructions: |
+        공통 코드 리뷰 시:
+        - 도메인과 무관한 UI·유틸·설정·통신 기반 코드만 배치
+        - api: 공통 요청·응답 및 오류 처리, 도메인 전용 로직 제외
+        - config: 공통 설정 / ui: 범용 UI / utils: 범용 함수
+        - app·views·features·entities 등 상위 레이어 참조 금지
+
+    - path: 'src/entities/**'
+      instructions: |
+        도메인 코드 리뷰 시:
+        - 여러 화면에서 공유할 도메인 데이터·관련 로직 배치 (타입, API, query key, 도메인 판단, 데이터 표시 UI)
+        - shared 참조 허용, 다른 entities 슬라이스·상위 레이어 직접 참조 금지
+
+    - path: 'src/features/**'
+      instructions: |
+        사용자 행동 코드 리뷰 시:
+        - 재사용·책임 분리가 필요한 사용자 행동 로직 배치
+        - 새 사용자 행동만으로 분리하지 않고 필요성 확인
+        - entities·shared 참조 허용, 다른 features 슬라이스·상위 레이어 직접 참조 금지
+
+    - path: 'src/widgets/**'
+      instructions: |
+        향후 도입 시:
+        - 여러 기능을 조합하며 재사용·독립 관리가 필요한 큰 UI 블록 배치
+        - features·entities·shared 참조 허용, 다른 widgets 슬라이스·상위 레이어 직접 참조 금지
+
+    - path: '**/*.{ts,tsx}'
+      instructions: |
+        폴더 / 파일:
+        - 폴더명: 케밥 케이스 (page-header)
+        - 상수·타입·유틸 파일명: 카멜 케이스 (userType.ts)
+        - 컴포넌트·페이지 파일명: 파스칼 케이스 (PageHeader.tsx)
+        - Next.js 특수 파일은 프레임워크 지정 이름 유지 (page.tsx, layout.tsx 등)
+
+        네이밍:
+        - 상수: 대문자 스네이크 케이스 (API_KEY)
+        - 함수형 컴포넌트: 파스칼 케이스 (MainHeader)
+        - 변수명: 줄임말 없이 의미가 명확한 이름 사용 (arr1 등 금지)
+        - Props 타입: 컴포넌트명 + Props (PageHeaderProps)
+
+        변수:
+        - var 금지, const 기본 사용, 재할당 시에만 let 사용
+        - 문자열 조합: + 대신 템플릿 리터럴 사용
+        - props·객체 인자: 함수 인자에서 구조분해할당
+
+        타입:
+        - 컴포넌트 props 타입: 컴포넌트 바로 위에 선언
+        - 객체 구조·컴포넌트 Props: interface 사용
+        - 서버 응답처럼 형태가 고정된 타입·Union·Tuple·유틸리티 타입: type 사용
+
+        함수:
+        - 화살표 함수 기본 사용
+        - 역할이 드러나는 함수명 사용 (get, create, check 등)
+        - 이벤트 핸들러: handle 접두사 (handleOnClick, handleSubmit)
+        - boolean 반환 유틸 함수: has + 명사 (hasEmail)
+        - 여러 곳에서 사용하는 함수: utils에 배치
+        - 프로젝트 전역의 도메인 무관 함수: shared/utils에 배치
+        - 가능한 경우 early return 활용
+
+        제어문 / 반복문:
+        - 조건문: 삼항 연산자 사용
+        - switch-case: break 필수, case 사이 한 줄 띄우기
+        - for 대신 forEach·map 사용
+        - map 렌더링의 key: index 대신 고유한 값 사용
+
+        비동기 처리:
+        - axios: .then / .catch 사용
+        - async/await: try/catch 사용
+
+        주석:
+        - 설명할 코드 바로 위에 작성 (코드 아래 작성 금지)
+        - 한 줄 설명: 코드 끝 작성 허용
+
+        Export:
+        - 내보낼 요소 수와 관계없이 named export 사용
+        - Next.js가 default export를 요구하는 특수 파일은 예외 (page.tsx, layout.tsx, loading.tsx 등)
+        - barrel 재수출을 적용한 단위: named export 사용
+
+        Import:
+        - 다른 폴더로 ../../ 이상 이동 시 @/ 절대 경로 사용
+        - 같은 페이지·기능 폴더 내 ../ 이내 이동 시 상대 경로 허용
+
+    - path: '**/*.tsx'
+      instructions: |
+        컴포넌트:
+        - button 태그에 type 명시
+        - 버튼·헤더 등 공용 컴포넌트에서 children 적극 활용
+
+    - path: '**/*.{ts,tsx,css}'
+      instructions: |
+        스타일링 (Tailwind):
+        - 루트 폰트 크기: src/styles/layout.css에서 62.5% 설정 (기준: 1rem = 10px)
+        - 크기·간격·둥글기·글자 크기 등 수치 값: Tailwind 기본 스케일 대신 rem 단위 임의값 사용
+        - 디자인 시안의 px 값을 10으로 나눠 rem으로 변환
+        - 사용 예: rounded-[1rem] px-[3rem] py-[1.6rem] gap-[0.8rem] text-[1.4rem]
+        - 지양 예: rounded-lg px-12 py-4 gap-2 text-sm
+        - 수치 없는 유틸리티는 그대로 사용 (flex, items-center, font-bold, w-full, min-h-screen 등)
+        - 조건부 클래스 병합·외부 className 덮어쓰기: @/shared/utils/cn 사용
+
+    - path: '.github/workflows/**'
+      instructions: |
+        CI 리뷰 시:
+        - packageManager에 지정된 pnpm 버전 및 --frozen-lockfile 사용 확인
+        - pnpm format:check·pnpm lint·pnpm build 실행 및 실제 스크립트와 일치 여부 확인
+        - 최소 권한·비밀값 노출·PR 입력의 셸 삽입 확인
+
+    - path: 'eslint.config.*'
+      instructions: |
+        ESLint 설정 리뷰 시:
+        - docs/conventions/dev-convention.md 규칙(var 금지, button type, map key, named export 등)과 rules 일치 여부 확인
+        - eslint-config-prettier가 배열 마지막(globalIgnores 제외)에 위치하는지 확인
+        - no-restricted-imports의 @/ 패턴·레이어 의존 방향이 tsconfig paths 및 docs/architecture/fsd.md와 일치하는지 확인
+
+    - path: '.prettierrc'
+      instructions: |
+        Prettier 설정 리뷰 시:
+        - prettier-plugin-tailwindcss 및 tailwindStylesheet 경로 유지 확인
+        - ESLint 포맷 규칙과의 충돌 여부 확인
+
+    - path: 'lint-staged.config.*'
+      instructions: |
+        lint-staged 설정 리뷰 시:
+        - 대상 glob이 실제 프로젝트 파일 확장자와 맞는지 확인
+        - eslint --fix 이후 prettier --write 순서 유지 확인
+
+    - path: '.husky/**'
+      instructions: |
+        Git hook 리뷰 시:
+        - pre-commit은 lint-staged만 실행, typecheck·build 등 무거운 검증은 CI에서 담당
+        - CI에서 HUSKY=0으로 hook을 건너뛰는지 확인
+
+    - path: 'docs/**'
+      instructions: |
+        문서 리뷰 시:
+        - 코드·설정과 컨벤션 일치 여부 확인
+        - 현재 구조와 향후 도입할 레이어 구분
+
+    - path: '.coderabbit.yaml'
+      instructions: |
+        설정 리뷰 시:
+        - YAML 문법·공식 스키마 호환성 확인
+        - 프로젝트 컨벤션과 경로별 지침 일치 여부 확인
+
+  # 자동 리뷰
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - '^develop$'
+      - '^main$'
+
+  # PR·브랜치·커밋 검사
+  pre_merge_checks:
+    title:
+      mode: warning
+      requirements: |
+        - '[접두사] 작업 내용' 형식
+    custom_checks:
+      - name: 브랜치 및 PR
+        mode: warning
+        instructions: |
+          - docs/conventions/git-convention.md 및 PR 템플릿 기준 검토
+          - 작업 브랜치: '접두사/#이슈번호/작업-내용', 작업 PR은 develop 대상
+          - main 대상은 develop 통합 PR만 허용, 작업 브랜치 명명 규칙 제외
+          - 이슈 연결·변경 내용·선택 이유 확인, UI 변경 시 스크린샷 확인
+          - lint·build 결과 등 확인할 수 없는 사실은 위반으로 단정 금지
+
+      - name: 커밋 컨벤션
+        mode: warning
+        instructions: |
+          - docs/conventions/commit.md 기준, 확인 가능한 개별 커밋만 검토
+          - '접두사: 제목' 형식, 본문은 필요 시 작성
+          - 목적별 분리, 자동 생성·포맷팅과 로직 변경 분리
+          - 파일별 커밋 원칙 및 문서 동반·일괄 변경 예외는 문서 기준 적용
+
+  # 정적 분석
+  tools:
+    eslint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+
+# PR 대화
+chat:
+  auto_reply: true
+
+# 프로젝트 컨벤션 참조
+knowledge_base:
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - 'AGENTS.md'
+      - 'docs/conventions/dev-convention.md'
+      - 'docs/conventions/tooling.md'
+      - 'docs/conventions/commit.md'
+      - 'docs/conventions/git-convention.md'
