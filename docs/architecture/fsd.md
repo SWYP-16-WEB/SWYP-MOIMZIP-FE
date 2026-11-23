@@ -70,7 +70,7 @@ entities/event/
 | `entities` | `event`            | 이벤트 타입·API, 진행/완료·호스트 여부·응답 마감 판단, 모임 유형별 이름·아이콘 매핑, 초대장 카드(`InvitationCard`), 목록 아이템(`EventCard`) | 1-3, 2-1, 3-1, 3-4, 4-1, 5-1, 5-2, 6-1, 7-1 |
 | `entities` | `response`         | 참석 응답 타입·API, 참석/불참 집계, 참석 상태 뱃지, 집계 카드                                                                                | 2-1, 4-2                                    |
 | `entities` | `user`             | 로그인 사용자 정보 조회, 회원 여부                                                                                                           | 1-1, 3-3, 4-1, 5-x                          |
-| `features` | `auth`             | 카카오 로그인(버튼 포함), 로그아웃, 로그인 결과 처리                                                                                         | 1-5, 3-3, 5-3                               |
+| `features` | `auth`             | 카카오 로그인(버튼 `KakaoLoginButton` 구현), 로그아웃, 로그인 결과 처리                                                                      | 1-5, 3-3, 5-3                               |
 | `features` | `create-event`     | 생성 플로우 임시 데이터 (유형 → 기본 정보 → 체크리스트 → 미리보기 → 리마인드)                                                                | 3-1 ~ 3-4, 7-1, 2-3                         |
 | `features` | `set-reminder`     | 리마인드 폼과 검증 (저장 방식은 상위 `views`에서 `onSubmit`으로 연결)                                                                        | 2-3 (3-4, 4-2에서 진입)                     |
 | `features` | `share-invitation` | 공유 URL 복사, 카카오톡 공유                                                                                                                 | 4-1, 6-1                                    |
@@ -118,6 +118,7 @@ const { setReminder } = useCreateEventDraft();
 | 레이아웃 | 헤더(뒤로가기·로고·사용자 아이콘 슬롯), 하단 탭바, 봉투 틀(`Envelope`)                                                                  |
 
 - 봉투 틀은 상단 아이콘과 내부 콘텐츠를 slot으로 받는 장식 컴포넌트로 `shared/ui`에 두고, 그 안에 들어가는 초대장 내용은 `entities/event`의 `InvitationCard`가 담당합니다. 기본 정보 폼(3-2)처럼 초대장 대신 폼이 들어가는 화면도 같은 틀을 사용합니다.
+- 카카오 로그인 버튼은 인증 기능의 진입점으로 `features/auth`에 배치하며, 실제 로그인 연동은 인증 정책 확정 후 구현합니다.
 - 버튼 컴포넌트는 `shared/ui/button`에 구현되어 있으며 `@/shared/ui`에서 가져옵니다. 카드의 이미지와 문구·선택 상태는 props로 전달합니다. 사용 방법은 [버튼 컴포넌트 문서](../design/buttons.md)를 참고합니다.
 
 ## 인증 (미확정)
