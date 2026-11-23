@@ -41,6 +41,6 @@ export const FeatureCard = ({
       {image}
     </span>
     <span className='body-sb-16'>{children}</span>
-    <span className='mt-[0.8rem] caption-rg-12 whitespace-pre'>{description}</span>
+    <span className='mt-[0.8rem] caption-rg-12 whitespace-pre-wrap'>{description}</span>
   </ButtonBase>
 );
