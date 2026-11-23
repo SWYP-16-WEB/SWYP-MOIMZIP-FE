@@ -6,7 +6,7 @@ export type { CategoryCardProps } from './CategoryCard';
 export { CategoryCard } from './CategoryCard';
 export type { FeatureCardProps } from './FeatureCard';
 export { FeatureCard } from './FeatureCard';
-export type { IconButtonProps, IconButtonVariant } from './IconButton';
+export type { IconButtonIcon, IconButtonProps, IconButtonVariant } from './IconButton';
 export { IconButton } from './IconButton';
 export type { LinkButtonProps } from './LinkButton';
 export { LinkButton } from './LinkButton';

@@ -6,7 +6,7 @@ import { cn } from '@/shared/utils/cn';
 import { ButtonBase } from './ButtonBase';
 
 export interface LinkButtonProps extends ComponentPropsWithRef<'a'> {
-  disabled?: boolean;
+  href: string;
 }
 
 export const LinkButton = ({ className, children, ...props }: LinkButtonProps) => (

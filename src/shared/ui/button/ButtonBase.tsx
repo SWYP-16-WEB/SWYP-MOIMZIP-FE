@@ -8,7 +8,6 @@ interface NativeButtonBaseProps extends ComponentPropsWithRef<'button'> {
 
 interface AnchorButtonBaseProps extends ComponentPropsWithRef<'a'> {
   as: 'a';
-  disabled?: boolean;
 }
 
 export type ButtonBaseProps = NativeButtonBaseProps | AnchorButtonBaseProps;
@@ -18,18 +17,9 @@ const BASE_CLASS_NAME =
 
 export const ButtonBase = (props: ButtonBaseProps) => {
   if (props.as === 'a') {
-    const { as: _as, disabled = false, className, href, onClick, tabIndex, ...anchorProps } = props;
+    const { as: _as, className, ...anchorProps } = props;
 
-    return (
-      <a
-        {...anchorProps}
-        href={disabled ? undefined : href}
-        aria-disabled={disabled ? true : anchorProps['aria-disabled']}
-        tabIndex={disabled ? -1 : tabIndex}
-        onClick={disabled ? undefined : onClick}
-        className={cn(BASE_CLASS_NAME, className)}
-      />
-    );
+    return <a {...anchorProps} className={cn(BASE_CLASS_NAME, className)} />;
   }
 
   const { as: _as, type = 'button', className, ...buttonProps } = props;
