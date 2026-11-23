@@ -5,6 +5,7 @@ import type { SVGProps } from 'react';
 
 export type IconProps = SVGProps<SVGSVGElement>;
 
+export { ArrowRightUpIcon } from './icons/ArrowRightUpIcon';
 export { BackIcon } from './icons/BackIcon';
 export { BigXIcon } from './icons/BigXIcon';
 export { BirthdayIcon } from './icons/BirthdayIcon';
