@@ -10,7 +10,7 @@ export const Checkbox = ({ className, ...props }: CheckboxProps) => (
   <span className={cn('relative inline-flex size-[1.4rem] shrink-0', className)}>
     <input
       type='checkbox'
-      className='peer absolute -inset-[0.5rem] cursor-pointer opacity-0 disabled:cursor-not-allowed'
+      className='peer absolute -inset-[0.5rem] cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed'
       {...props}
     />
     <span
