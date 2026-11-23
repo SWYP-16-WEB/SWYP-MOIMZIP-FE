@@ -70,6 +70,7 @@ PR(`develop`, `main` 대상)마다 `pnpm format:check` → `pnpm lint` → `pnpm
 - 파일명 → 컴포넌트명: `arrow-left.svg` → `ArrowLeftIcon` (`Icon` 접미사 자동 부여)
 - `fill`/`stroke` 색상은 `currentColor`로 치환합니다. (`none`, `url(#...)`은 유지) → `text-*`로 색상 제어
 - `viewBox`는 svgo에서 제거하지 않도록 설정하고, 그래도 빠지면 원본 값을 다시 주입합니다.
+- SVG 내부 ID와 참조에는 컴포넌트명 prefix를 붙여 서로 다른 아이콘을 함께 표시할 때 패턴·이미지 참조가 충돌하지 않도록 합니다.
 - 프로젝트 컨벤션에 맞춰 named export로 생성하며, Prettier 설정을 그대로 적용합니다.
 - `pnpm build` 실행 시 `prebuild`로 `build:icons` → `barrels`가 먼저 자동 실행됩니다. SVG만 추가하고 바로 빌드해도 반영됩니다.
 - `pnpm dev`에서는 자동 실행되지 않으므로, 개발 중 SVG를 추가했다면 `pnpm build:icons`를 직접 실행하세요. 생성 파일은 함께 커밋합니다.
