@@ -1,6 +1,0 @@
-.glass {
-  backdrop-filter: blur(1rem);
-  box-shadow:
-    inset 0.05rem 0.05rem 0.1rem color-mix(in srgb, var(--color-text-white) 40%, transparent),
-    inset -0.05rem -0.05rem 0.1rem color-mix(in srgb, var(--color-text-white) 15%, transparent);
-}

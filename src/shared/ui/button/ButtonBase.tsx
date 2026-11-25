@@ -2,33 +2,18 @@ import type { ComponentPropsWithRef } from 'react';
 
 import { cn } from '@/shared/utils/cn';
 
-interface NativeButtonBaseProps extends ComponentPropsWithRef<'button'> {
-  as?: 'button';
-}
+import { BUTTON_FOCUS_CLASS_NAME } from './buttonStyles';
 
-interface AnchorButtonBaseProps extends ComponentPropsWithRef<'a'> {
-  as: 'a';
-}
+export type ButtonBaseProps = ComponentPropsWithRef<'button'>;
 
-export type ButtonBaseProps = NativeButtonBaseProps | AnchorButtonBaseProps;
-
-const BASE_CLASS_NAME =
-  'relative inline-flex shrink-0 items-center justify-center cursor-pointer select-none focus-visible:outline-[0.2rem] focus-visible:outline-offset-[0.3rem] focus-visible:outline-brand-secondary disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40';
-
-export const ButtonBase = (props: ButtonBaseProps) => {
-  if (props.as === 'a') {
-    const { as: _as, className, ...anchorProps } = props;
-
-    return <a {...anchorProps} className={cn(BASE_CLASS_NAME, className)} />;
-  }
-
-  const { as: _as, type = 'button', className, ...buttonProps } = props;
-
-  return (
-    <button
-      {...buttonProps}
-      type={type === 'submit' ? 'submit' : type === 'reset' ? 'reset' : 'button'}
-      className={cn(BASE_CLASS_NAME, className)}
-    />
-  );
-};
+export const ButtonBase = ({ type = 'button', className, ...props }: ButtonBaseProps) => (
+  <button
+    {...props}
+    type={type === 'submit' ? 'submit' : type === 'reset' ? 'reset' : 'button'}
+    className={cn(
+      BUTTON_FOCUS_CLASS_NAME,
+      'relative inline-flex shrink-0 cursor-pointer items-center justify-center select-none disabled:cursor-not-allowed disabled:opacity-40',
+      className,
+    )}
+  />
+);
