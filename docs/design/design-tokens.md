@@ -21,6 +21,8 @@
 | Text/White         | `--color-text-white`      | `#FFFFFF` | `text-text-white`        |
 | Background/Primary | `--color-bg-primary`      | `#081412` | `bg-bg-primary`          |
 
+카카오 로그인 버튼은 전용 컬러 `--color-kakao-background: #FEE500`을 사용하며, 배경 클래스는 `bg-kakao-background`입니다.
+
 토큰 이름의 `brand-*`는 브랜드 컬러, `text-*`는 텍스트 컬러, `bg-*`는 배경 컬러의 역할을 나타냅니다.
 
 Tailwind 클래스는 **속성 접두사 + `--color-` 뒤의 토큰 이름**으로 작성합니다. 따라서 `--color-bg-primary`의 배경색 클래스는 `bg-bg-primary`, `--color-text-white`의 텍스트색 클래스는 `text-text-white`입니다.

@@ -5,23 +5,28 @@ import type { SVGProps } from 'react';
 
 export type IconProps = SVGProps<SVGSVGElement>;
 
+export { ArrowRightUpIcon } from './icons/ArrowRightUpIcon';
 export { BackIcon } from './icons/BackIcon';
 export { BigXIcon } from './icons/BigXIcon';
 export { BirthdayIcon } from './icons/BirthdayIcon';
 export { BridalShowerIcon } from './icons/BridalShowerIcon';
 export { CalendarIcon } from './icons/CalendarIcon';
+export { CameraIcon } from './icons/CameraIcon';
 export { ChatIcon } from './icons/ChatIcon';
 export { CheckIcon } from './icons/CheckIcon';
 export { ClosedIcon } from './icons/ClosedIcon';
 export { ClubIcon } from './icons/ClubIcon';
 export { CompleteIcon } from './icons/CompleteIcon';
 export { CustomIcon } from './icons/CustomIcon';
+export { EventPreparationIcon } from './icons/EventPreparationIcon';
 export { FarewellWelcomeIcon } from './icons/FarewellWelcomeIcon';
 export { FilterIcon } from './icons/FilterIcon';
 export { FirstBirthdayIcon } from './icons/FirstBirthdayIcon';
 export { GraduationIcon } from './icons/GraduationIcon';
 export { HomeIcon } from './icons/HomeIcon';
 export { HomePartyIcon } from './icons/HomePartyIcon';
+export { InvitationOnlyIcon } from './icons/InvitationOnlyIcon';
+export { KakaoIcon } from './icons/KakaoIcon';
 export { LogoIcon } from './icons/LogoIcon';
 export { NextIcon } from './icons/NextIcon';
 export { NotificationIcon } from './icons/NotificationIcon';

@@ -3,3 +3,7 @@
 @import './font.token.css';
 @import './reset.css';
 @import './layout.css';
+
+@utility glass {
+  @apply shadow-[inset_0.05rem_0.05rem_0.1rem_color-mix(in_srgb,var(--color-text-white)_40%,transparent),inset_-0.05rem_-0.05rem_0.1rem_color-mix(in_srgb,var(--color-text-white)_15%,transparent)] backdrop-blur-[1rem];
+}
