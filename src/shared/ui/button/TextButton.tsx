@@ -4,14 +4,14 @@ import { cn } from '@/shared/utils/cn';
 
 import { ButtonBase } from './ButtonBase';
 
-export type TextButtonVariant = 'blue' | 'lime';
+export type TextButtonVariant = 'secondary' | 'lime';
 
 export interface TextButtonProps extends ComponentPropsWithRef<'button'> {
   variant?: TextButtonVariant;
 }
 
 export const TextButton = ({
-  variant = 'blue',
+  variant = 'secondary',
   className,
   children,
   ...props
@@ -20,7 +20,7 @@ export const TextButton = ({
     {...props}
     className={cn(
       'rounded-[4.7rem] px-[1rem] py-[0.4rem] caption-sb-12 text-bg-primary',
-      variant === 'blue' ? 'bg-brand-secondary' : 'bg-brand-lime',
+      variant === 'secondary' ? 'bg-brand-secondary' : 'bg-brand-lime',
       className,
     )}
   >

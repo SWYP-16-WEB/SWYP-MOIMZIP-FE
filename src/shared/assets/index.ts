@@ -11,6 +11,7 @@ export { BigXIcon } from './icons/BigXIcon';
 export { BirthdayIcon } from './icons/BirthdayIcon';
 export { BridalShowerIcon } from './icons/BridalShowerIcon';
 export { CalendarIcon } from './icons/CalendarIcon';
+export { CameraIcon } from './icons/CameraIcon';
 export { ChatIcon } from './icons/ChatIcon';
 export { CheckIcon } from './icons/CheckIcon';
 export { ClosedIcon } from './icons/ClosedIcon';
