@@ -1,7 +1,7 @@
 import { CheckIcon } from '@/shared/assets';
 import { cn } from '@/shared/utils/cn';
 
-export interface SelectionIndicatorProps {
+interface SelectionIndicatorProps {
   selected: boolean;
   className?: string;
 }

@@ -3,19 +3,23 @@ import type { ComponentPropsWithRef } from 'react';
 import { cn } from '@/shared/utils/cn';
 
 import { ButtonBase } from './ButtonBase';
-import { BUTTON_GLASS_CLASS_NAME } from './buttonStyles';
 
-export type ButtonSize = 'large' | 'small';
+type PrimaryButtonSize = 'large' | 'small';
 
-export interface ButtonProps extends ComponentPropsWithRef<'button'> {
-  size?: ButtonSize;
+interface PrimaryButtonProps extends ComponentPropsWithRef<'button'> {
+  size?: PrimaryButtonSize;
 }
 
-export const Button = ({ size = 'large', className, children, ...props }: ButtonProps) => (
+export const PrimaryButton = ({
+  size = 'large',
+  className,
+  children,
+  ...props
+}: PrimaryButtonProps) => (
   <ButtonBase
     {...props}
     className={cn(
-      BUTTON_GLASS_CLASS_NAME,
+      'glass',
       'max-w-full rounded-[1rem] bg-text-white/15 py-[1.4rem] text-center body-sb-16 text-text-white',
       size === 'large' ? 'px-[4.7rem]' : 'px-[2.4rem]',
       className,

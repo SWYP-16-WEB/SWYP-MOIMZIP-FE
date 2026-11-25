@@ -4,9 +4,9 @@ import { cn } from '@/shared/utils/cn';
 
 import { ButtonBase } from './ButtonBase';
 
-export type TextButtonVariant = 'secondary' | 'lime';
+type TextButtonVariant = 'secondary' | 'lime';
 
-export interface TextButtonProps extends ComponentPropsWithRef<'button'> {
+interface TextButtonProps extends ComponentPropsWithRef<'button'> {
   variant?: TextButtonVariant;
 }
 

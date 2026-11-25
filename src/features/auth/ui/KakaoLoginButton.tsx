@@ -4,7 +4,7 @@ import { KakaoIcon } from '@/shared/assets';
 import { ButtonBase } from '@/shared/ui';
 import { cn } from '@/shared/utils/cn';
 
-export interface KakaoLoginButtonProps extends ComponentPropsWithRef<'button'> {
+interface KakaoLoginButtonProps extends ComponentPropsWithRef<'button'> {
   children?: string;
 }
 

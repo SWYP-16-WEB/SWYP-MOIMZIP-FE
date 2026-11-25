@@ -1,13 +1,6 @@
-export type { ButtonProps, ButtonSize } from './Button';
-export { Button } from './Button';
-export type { ButtonBaseProps } from './ButtonBase';
 export { ButtonBase } from './ButtonBase';
-export { BUTTON_GLASS_CLASS_NAME } from './buttonStyles';
-export type { IconButtonProps } from './IconButton';
 export { IconButton } from './IconButton';
-export type { LinkButtonProps } from './LinkButton';
 export { LinkButton } from './LinkButton';
-export type { SelectionIndicatorProps } from './SelectionIndicator';
+export { PrimaryButton } from './PrimaryButton';
 export { SelectionIndicator } from './SelectionIndicator';
-export type { TextButtonProps, TextButtonVariant } from './TextButton';
 export { TextButton } from './TextButton';

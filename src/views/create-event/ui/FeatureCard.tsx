@@ -1,9 +1,9 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 
-import { BUTTON_GLASS_CLASS_NAME, ButtonBase, SelectionIndicator } from '@/shared/ui';
+import { ButtonBase, SelectionIndicator } from '@/shared/ui';
 import { cn } from '@/shared/utils/cn';
 
-export interface FeatureCardProps extends ComponentPropsWithRef<'button'> {
+interface FeatureCardProps extends ComponentPropsWithRef<'button'> {
   image: ReactNode;
   description: ReactNode;
   selected?: boolean;
@@ -22,9 +22,7 @@ export const FeatureCard = ({
     aria-pressed={selected}
     className={cn(
       'min-h-[26.1rem] w-[17.5rem] max-w-full flex-col items-stretch justify-start overflow-hidden rounded-[1.5rem] px-[1.2rem] pt-[4.4rem] pb-[2rem] text-left',
-      selected
-        ? 'bg-brand-primary text-bg-primary'
-        : [BUTTON_GLASS_CLASS_NAME, 'bg-brand-primary/15 text-text-white'],
+      selected ? 'bg-brand-primary text-bg-primary' : 'bg-brand-primary/15 text-text-white glass',
       className,
     )}
   >

@@ -3,7 +3,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { ButtonBase } from '@/shared/ui';
 import { cn } from '@/shared/utils/cn';
 
-export interface CategoryCardProps extends ComponentPropsWithRef<'button'> {
+interface CategoryCardProps extends ComponentPropsWithRef<'button'> {
   image: ReactNode;
   selected?: boolean;
 }

@@ -5,7 +5,7 @@ import { cn } from '@/shared/utils/cn';
 
 import { BUTTON_FOCUS_CLASS_NAME } from './buttonStyles';
 
-export interface LinkButtonProps extends ComponentPropsWithRef<'a'> {
+interface LinkButtonProps extends ComponentPropsWithRef<'a'> {
   href: string;
 }
 

@@ -4,7 +4,7 @@ import { cn } from '@/shared/utils/cn';
 
 import { BUTTON_FOCUS_CLASS_NAME } from './buttonStyles';
 
-export type ButtonBaseProps = ComponentPropsWithRef<'button'>;
+type ButtonBaseProps = ComponentPropsWithRef<'button'>;
 
 export const ButtonBase = ({ type = 'button', className, ...props }: ButtonBaseProps) => (
   <button

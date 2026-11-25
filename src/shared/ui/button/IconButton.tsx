@@ -4,10 +4,7 @@ import { cn } from '@/shared/utils/cn';
 
 import { ButtonBase } from './ButtonBase';
 
-export interface IconButtonProps extends Omit<
-  ComponentPropsWithRef<'button'>,
-  'aria-label' | 'children'
-> {
+interface IconButtonProps extends Omit<ComponentPropsWithRef<'button'>, 'aria-label' | 'children'> {
   'aria-label': string;
   icon: ReactNode;
   selected?: boolean;
