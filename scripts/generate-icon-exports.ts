@@ -74,7 +74,9 @@ const removeStaleIcons = async (icons: GeneratedIcon[]) => {
   const files = await readdir(ICON_DIR);
   await Promise.all(
     files
-      .filter((file) => /^[A-Z][A-Za-z0-9]*Icon\.tsx$/.test(file) && !expectedFiles.has(file))
+      .filter(
+        (file) => /^(?:Icon|[A-Z][A-Za-z0-9]*Icon)\.tsx$/.test(file) && !expectedFiles.has(file),
+      )
       .map(async (file) => {
         const path = join(ICON_DIR, file);
         const content = await readFile(path, 'utf-8');

@@ -64,10 +64,19 @@ export const DatePicker = ({
   const [requestedMonth, setMonth] = useState(() =>
     getMonthStart(clampDate(value ?? initialMonth, minDate, maxDate)),
   );
-  const month = getMonthStart(clampDate(requestedMonth, minDate, maxDate));
+  const [previousValue, setPreviousValue] = useState(valueString);
   const [focusedDate, setFocusedDate] = useState<Date | null>(null);
   const dateButtons = useRef(new Map<string, HTMLButtonElement>());
   const headingId = useId();
+
+  // 새 선택값은 해당 월에 표시하고, 선택 해제 시에는 탐색 중인 월을 유지한다.
+  if (previousValue !== valueString) {
+    setPreviousValue(valueString);
+    if (value) setMonth(getMonthStart(clampDate(value, minDate, maxDate)));
+    setFocusedDate(null);
+  }
+
+  const month = getMonthStart(clampDate(requestedMonth, minDate, maxDate));
   const weeks = getMonthWeeks(month);
   const selectedKey = value ? getDateKey(value) : null;
   const availableDates = weeks.flatMap(({ days }) =>
