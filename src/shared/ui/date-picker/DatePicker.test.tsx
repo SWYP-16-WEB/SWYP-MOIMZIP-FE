@@ -54,3 +54,30 @@ test('6주 셀을 중복 없이 만들고 월 첫날의 요일을 맞춘다', ()
   assert.equal(cells.filter(({ date }) => date !== null).length, 31);
   assert.equal(getDateKey(weeks[0].days[5].date!), '2027-01-01');
 });
+
+test('지원 연도 경계 밖으로 월 이동하지 않는다', () => {
+  const first = renderToString(
+    <DatePicker value='0001-01-01' defaultMonth='0001-01-01' onChange={() => {}} />,
+  );
+  const last = renderToString(
+    <DatePicker value='9999-12-31' defaultMonth='9999-12-01' onChange={() => {}} />,
+  );
+  assert.match(first, /aria-label="이전 달" disabled=""/);
+  assert.match(last, /aria-label="다음 달" disabled=""/);
+});
+
+test('날짜 범위가 역전되면 거부한다', () => {
+  assert.throws(
+    () =>
+      renderToString(
+        <DatePicker
+          value={null}
+          defaultMonth='2027-01-01'
+          minDate='2027-01-20'
+          maxDate='2027-01-10'
+          onChange={() => {}}
+        />,
+      ),
+    RangeError,
+  );
+});

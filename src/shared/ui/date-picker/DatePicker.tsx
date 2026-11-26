@@ -25,9 +25,12 @@ import {
 const FOCUS_CLASS_NAME =
   'focus-visible:outline-[0.2rem] focus-visible:outline-offset-[0.2rem] focus-visible:outline-brand-secondary';
 
-export interface DatePickerProps extends Omit<
+// Figma의 GLASS 굴절 효과는 배경 블러와 안쪽 하이라이트로 근사한다.
+const GLASS_CLASS_NAME = 'inset-ring-[0.05rem] inset-ring-text-white/15';
+
+interface DatePickerProps extends Omit<
   ComponentPropsWithRef<'div'>,
-  'onChange' | 'defaultValue'
+  'onChange' | 'defaultValue' | 'children'
 > {
   // 모든 날짜는 시간대가 없는 YYYY-MM-DD 형식으로 전달한다.
   value: string | null;
@@ -52,9 +55,10 @@ export const DatePicker = ({
 }: DatePickerProps) => {
   const value = valueString === null ? null : parseDate(valueString);
   const initialMonth = parseDate(defaultMonth);
-  const minDate = minDateString === undefined ? undefined : parseDate(minDateString);
-  const maxDate = maxDateString === undefined ? undefined : parseDate(maxDateString);
-  if (minDate && maxDate && minDate > maxDate) {
+  // 공개 날짜 형식이 지원하는 0001~9999년 밖으로 이동하지 않게 한다.
+  const minDate = parseDate(minDateString ?? '0001-01-01');
+  const maxDate = parseDate(maxDateString ?? '9999-12-31');
+  if (minDate > maxDate) {
     throw new RangeError('DatePicker의 minDate는 maxDate보다 늦을 수 없습니다.');
   }
   const [requestedMonth, setMonth] = useState(() =>
@@ -78,7 +82,7 @@ export const DatePicker = ({
     const candidate = shiftMonth(month, direction);
     const first = getMonthStart(candidate);
     const last = createDate(candidate.getUTCFullYear(), candidate.getUTCMonth() + 1, 0);
-    return (!minDate || last >= minDate) && (!maxDate || first <= maxDate);
+    return last >= minDate && first <= maxDate;
   };
 
   const handleMonthChange = (direction: number) => {
@@ -113,7 +117,8 @@ export const DatePicker = ({
       role={props.role ?? 'group'}
       aria-label={ariaLabel}
       className={cn(
-        'w-[24.3rem] max-w-full rounded-[0.8rem] bg-bg-primary/40 px-[0.9rem] pt-[1rem] pb-[0.4rem] text-text-white shadow-[inset_0_0_0.6rem_var(--color-calendar-shadow)]',
+        GLASS_CLASS_NAME,
+        'w-[24.3rem] max-w-full rounded-[0.8rem] bg-bg-primary/40 px-[0.9rem] pt-[1rem] pb-[0.4rem] text-text-white shadow-[inset_0_0_0.6rem_var(--color-calendar-shadow)] backdrop-blur-[0.7rem]',
         className,
       )}
     >
@@ -122,8 +127,12 @@ export const DatePicker = ({
           id={headingId}
           aria-live='polite'
           aria-atomic='true'
-          className='rounded-[1.2rem] bg-bg-primary/40 px-[0.8rem] py-[0.3rem] caption-rg-10'
+          className={cn(
+            GLASS_CLASS_NAME,
+            'rounded-[1.2rem] bg-bg-primary/40 px-[0.8rem] py-[0.3rem] caption-rg-10 backdrop-blur-[0.4rem]',
+          )}
         >
+          <span className='sr-only'>{ariaLabel} </span>
           {getMonthLabel(month)}
         </span>
         <div className='flex gap-[1.2rem]'>
@@ -134,7 +143,8 @@ export const DatePicker = ({
             onClick={() => handleMonthChange(-1)}
             className={cn(
               FOCUS_CLASS_NAME,
-              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 disabled:cursor-not-allowed disabled:opacity-40',
+              GLASS_CLASS_NAME,
+              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 backdrop-blur-[0.4rem] disabled:cursor-not-allowed disabled:opacity-40',
             )}
           >
             <BackIcon width={20} height={20} aria-hidden='true' focusable='false' />
@@ -146,19 +156,15 @@ export const DatePicker = ({
             onClick={() => handleMonthChange(1)}
             className={cn(
               FOCUS_CLASS_NAME,
-              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 disabled:cursor-not-allowed disabled:opacity-40',
+              GLASS_CLASS_NAME,
+              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 backdrop-blur-[0.4rem] disabled:cursor-not-allowed disabled:opacity-40',
             )}
           >
             <NextIcon width={20} height={20} aria-hidden='true' focusable='false' />
           </button>
         </div>
       </div>
-      <table
-        role='grid'
-        aria-labelledby={headingId}
-        aria-label={ariaLabel}
-        className='w-full table-fixed border-collapse'
-      >
+      <table role='grid' aria-labelledby={headingId} className='w-full table-fixed border-collapse'>
         <thead>
           <tr>
             {WEEKDAY_LABELS.map((label, weekday) => (
@@ -201,15 +207,15 @@ export const DatePicker = ({
                       onFocus={() => setFocusedDate(date)}
                       onClick={() => onChange(getDateKey(date))}
                       onKeyDown={(event) => handleDateKeyDown(event, date)}
-                      className='flex w-full cursor-pointer items-center justify-center rounded-full focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30'
+                      className='group/date flex w-full cursor-pointer items-center justify-center rounded-full focus-visible:outline-none disabled:cursor-not-allowed'
                     >
                       <span
                         className={cn(
                           FOCUS_CLASS_NAME,
                           'flex size-[2rem] items-center justify-center rounded-full caption-rg-10',
                           dateKey === selectedKey
-                            ? 'bg-text-white text-bg-primary'
-                            : 'text-text-white',
+                            ? 'bg-text-white text-bg-primary group-disabled/date:text-bg-primary/50'
+                            : 'text-text-white group-disabled/date:text-text-white/50',
                           'in-focus-visible:outline-[0.2rem] in-focus-visible:outline-offset-[0.2rem] in-focus-visible:outline-brand-secondary',
                         )}
                       >
