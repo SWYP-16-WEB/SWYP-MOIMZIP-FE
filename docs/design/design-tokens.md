@@ -22,6 +22,7 @@
 | Background/Primary | `--color-bg-primary`      | `#081412` | `bg-bg-primary`          |
 
 `--color-calendar-shadow`는 캘린더 내부 그림자용 검정 20%(`rgb(0 0 0 / 20%)`) 토큰입니다.
+카카오 로그인 버튼은 전용 컬러 `--color-kakao-background: #FEE500`을 사용하며, 배경 클래스는 `bg-kakao-background`입니다.
 
 토큰 이름의 `brand-*`는 브랜드 컬러, `text-*`는 텍스트 컬러, `bg-*`는 배경 컬러의 역할을 나타냅니다.
 

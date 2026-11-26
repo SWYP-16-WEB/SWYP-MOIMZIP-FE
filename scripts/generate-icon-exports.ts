@@ -99,7 +99,10 @@ const generateIconComponent = async (file: string): Promise<GeneratedIcon> => {
       expandProps: 'end',
       template: iconTemplate,
       svgoConfig: {
-        plugins: [{ name: 'preset-default', params: { overrides: { removeViewBox: false } } }],
+        plugins: [
+          { name: 'preset-default', params: { overrides: { removeViewBox: false } } },
+          { name: 'prefixIds', params: { prefix: componentName } },
+        ],
       },
       plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
     },
