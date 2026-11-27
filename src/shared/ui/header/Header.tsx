@@ -44,7 +44,7 @@ export const Header = ({ variant, onBack, onMyPage, className, ...props }: Heade
         aria-label='모임집'
         focusable='false'
         className={cn(
-          'translate-x-[0.025rem] justify-self-center text-brand-primary',
+          'h-[2.2815rem] w-[6.8497rem] translate-x-[0.025rem] justify-self-center text-brand-primary',
           variant === 'back-logo' ? 'translate-y-[0.02rem] self-start' : 'translate-y-[0.041rem]',
         )}
       />
