@@ -1,6 +1,9 @@
+import Link, { type LinkProps } from 'next/link';
 import type { ReactNode } from 'react';
 
 import { cn } from '@/shared/utils/cn';
+
+import { BUTTON_FOCUS_CLASS_NAME } from '../button/buttonStyles';
 
 type ListCardTone = 'lime' | 'secondary';
 
@@ -10,6 +13,7 @@ interface ListCardProps {
   badge: string;
   tone?: ListCardTone;
   leading?: ReactNode;
+  href?: LinkProps['href'];
   className?: string;
 }
 
@@ -24,25 +28,24 @@ export const ListCard = ({
   badge,
   tone = 'lime',
   leading,
+  href,
   className,
 }: ListCardProps) => {
   const hasLeading = Boolean(leading);
+  const cardClassName = cn(
+    'flex h-[8.2rem] w-full rounded-[1rem] pr-[1.4rem]',
+    hasLeading ? 'pl-[1.4rem]' : 'pl-[1.7rem]',
+    TONE_STYLE[tone].card,
+    className,
+  );
 
-  return (
-    <div
-      className={cn(
-        'flex h-[8.2rem] w-full rounded-[1rem] pr-[1.4rem]',
-        hasLeading ? 'pl-[1.4rem]' : 'pl-[1.7rem]',
-        TONE_STYLE[tone].card,
-        className,
-      )}
-    >
+  const content = (
+    <>
       {hasLeading ? (
         <div className='mr-[1.6rem] flex size-[6rem] shrink-0 items-center justify-center self-center overflow-hidden rounded-full bg-bg-primary'>
           {leading}
         </div>
       ) : null}
-      {/* 위 패딩은 뱃지(2.6rem) 기준이며, 제목은 뱃지와 세로 가운데로 맞춘다. */}
       <div
         className={cn(
           'flex min-w-0 flex-1 flex-col justify-between pt-[1.5rem]',
@@ -76,6 +79,14 @@ export const ListCard = ({
           {description}
         </p>
       </div>
-    </div>
+    </>
+  );
+
+  return href ? (
+    <Link href={href} className={cn(BUTTON_FOCUS_CLASS_NAME, cardClassName)}>
+      {content}
+    </Link>
+  ) : (
+    <div className={cardClassName}>{content}</div>
   );
 };
