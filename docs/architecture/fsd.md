@@ -114,11 +114,13 @@ const { setReminder } = useCreateEventDraft();
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 버튼     | `ButtonBase` 기반 `Button`(Large·Small), `TextButton`(Secondary·Lime), `LinkButton`, `IconButton`, `SelectionIndicator` (구현 완료) |
 | 입력     | 라인 입력(라벨·필수 표시·에러 문구·글자 수 카운터), 라벨+값 정보 필드, 복사 버튼이 있는 값 필드                                     |
+| 목록     | 이미지·제목·설명·상태 뱃지를 보여주는 목록 카드(`ListCard`, 구현 완료)                                                              |
 | 선택     | 캘린더, 시간·분 선택, 세그먼트 컨트롤(필터 칩), 이미지 업로드                                                                       |
 | 오버레이 | 바텀시트, 토스트(시안 미정)                                                                                                         |
 | 레이아웃 | 헤더(뒤로가기·로고·사용자 아이콘 슬롯), 하단 탭바, 봉투 틀(`Envelope`)                                                              |
 
 - 봉투 틀은 상단 아이콘과 내부 콘텐츠를 slot으로 받는 장식 컴포넌트로 `shared/ui`에 두고, 그 안에 들어가는 초대장 내용은 `entities/event`의 `InvitationCard`가 담당합니다. 기본 정보 폼(3-2)처럼 초대장 대신 폼이 들어가는 화면도 같은 틀을 사용합니다.
+- `ListCard`는 표시 틀만 담당합니다. 모임 유형 아이콘·진행/완료 판단(`entities/event`의 `EventCard`)과 참석 상태 문구(`entities/response`)는 각 도메인에서 `ListCard`에 값을 넘겨 만듭니다.
 - 카카오 로그인 버튼은 인증 기능의 진입점으로 `features/auth`에 배치하며, 실제 로그인 연동은 인증 정책 확정 후 구현합니다.
 - 버튼 컴포넌트는 `shared/ui/button`에 구현되어 있으며 `@/shared/ui`에서 가져옵니다. 생성 화면 전용 카드는 `views/create-event/ui`에 두고, 이미지와 문구·선택 상태를 props로 전달합니다. 사용 방법은 [버튼 컴포넌트 문서](../design/buttons.md)를 참고합니다.
 
