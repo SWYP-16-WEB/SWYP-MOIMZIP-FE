@@ -63,6 +63,7 @@ Tailwind 클래스는 **속성 접두사 + `--color-` 뒤의 토큰 이름**으�
 | caption1 - reg 12 | `caption-rg-12` | `1.2rem`  | 400  | 150% |
 | caption2 - sb 12  | `caption-sb-12` | `1.2rem`  | 600  | 150% |
 | caption3 - reg 10 | `caption-rg-10` | `1rem`    | 400  | 150% |
+| caption - med 7   | `caption-md-7`  | `0.7rem`  | 500  | 150% |
 
 Caption2의 보조 설명에는 regular로 적혀 있지만 실제 연결된 스타일은 SemiBold 600이므로 실제 스타일 값을 따릅니다.
 

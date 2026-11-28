@@ -64,3 +64,10 @@
   line-height: 1.5;
   letter-spacing: 0;
 }
+
+@utility caption-md-7 {
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+}

@@ -1,29 +1,13 @@
 'use client';
 
-import type { ComponentPropsWithRef, KeyboardEvent } from 'react';
-import { useId, useRef, useState } from 'react';
+import type { ComponentPropsWithRef } from 'react';
 
 import { BackIcon, NextIcon } from '@/shared/assets';
 import { cn } from '@/shared/utils/cn';
 
-import {
-  clampDate,
-  createDate,
-  getDateKey,
-  getMonthLabel,
-  getMonthStart,
-  getMonthWeeks,
-  hasSameMonth,
-  hasSelectableDate,
-  parseDate,
-  shiftDate,
-  shiftMonth,
-  WEEKDAY_LABELS,
-  WEEKDAYS,
-} from './datePickerUtils';
-
-const FOCUS_CLASS_NAME =
-  'focus-visible:outline-[0.2rem] focus-visible:outline-offset-[0.2rem] focus-visible:outline-brand-secondary';
+import { IconButton } from '../button';
+import * as datePickerUtils from './datePickerUtils';
+import { useDatePicker } from './useDatePicker';
 
 // Figma의 GLASS 굴절 효과는 배경 블러와 안쪽 하이라이트로 근사한다.
 const GLASS_CLASS_NAME = 'inset-ring-[0.05rem] inset-ring-text-white/15';
@@ -53,72 +37,25 @@ export const DatePicker = ({
   'aria-label': ariaLabel = '날짜 선택',
   ...props
 }: DatePickerProps) => {
-  const value = valueString === null ? null : parseDate(valueString);
-  const initialMonth = parseDate(defaultMonth);
-  // 공개 날짜 형식이 지원하는 0001~9999년 밖으로 이동하지 않게 한다.
-  const minDate = parseDate(minDateString ?? '0001-01-01');
-  const maxDate = parseDate(maxDateString ?? '9999-12-31');
-  if (minDate > maxDate) {
-    throw new RangeError('DatePicker의 minDate는 maxDate보다 늦을 수 없습니다.');
-  }
-  const [requestedMonth, setMonth] = useState(() =>
-    getMonthStart(clampDate(value ?? initialMonth, minDate, maxDate)),
-  );
-  const [previousValue, setPreviousValue] = useState(valueString);
-  const [focusedDate, setFocusedDate] = useState<Date | null>(null);
-  const dateButtons = useRef(new Map<string, HTMLButtonElement>());
-  const headingId = useId();
-
-  // 새 선택값은 해당 월에 표시하고, 선택 해제 시에는 탐색 중인 월을 유지한다.
-  if (previousValue !== valueString) {
-    setPreviousValue(valueString);
-    if (value) setMonth(getMonthStart(clampDate(value, minDate, maxDate)));
-    setFocusedDate(null);
-  }
-
-  const month = getMonthStart(clampDate(requestedMonth, minDate, maxDate));
-  const weeks = getMonthWeeks(month);
-  const selectedKey = value ? getDateKey(value) : null;
-  const availableDates = weeks.flatMap(({ days }) =>
-    days.flatMap(({ date }) => (date && hasSelectableDate(date, minDate, maxDate) ? [date] : [])),
-  );
-  const tabDate = [focusedDate, value, availableDates[0]].find(
-    (date) => date && hasSameMonth(date, month) && hasSelectableDate(date, minDate, maxDate),
-  );
-  const tabDateKey = tabDate ? getDateKey(tabDate) : null;
-
-  const hasAvailableMonth = (direction: number) => {
-    const candidate = shiftMonth(month, direction);
-    const first = getMonthStart(candidate);
-    const last = createDate(candidate.getUTCFullYear(), candidate.getUTCMonth() + 1, 0);
-    return last >= minDate && first <= maxDate;
-  };
-
-  const handleMonthChange = (direction: number) => {
-    setMonth(getMonthStart(shiftMonth(month, direction)));
-    setFocusedDate(null);
-  };
-
-  const handleDateKeyDown = (event: KeyboardEvent<HTMLButtonElement>, date: Date) => {
-    const movements: Record<string, () => Date> = {
-      ArrowLeft: () => shiftDate(date, -1),
-      ArrowRight: () => shiftDate(date, 1),
-      ArrowUp: () => shiftDate(date, -7),
-      ArrowDown: () => shiftDate(date, 7),
-      Home: () => shiftDate(date, -date.getUTCDay()),
-      End: () => shiftDate(date, 6 - date.getUTCDay()),
-      PageUp: () => shiftMonth(date, event.shiftKey ? -12 : -1),
-      PageDown: () => shiftMonth(date, event.shiftKey ? 12 : 1),
-    };
-    const nextDate = movements[event.key]?.();
-    if (!nextDate) return;
-    event.preventDefault();
-    const target = clampDate(nextDate, minDate, maxDate);
-    setFocusedDate(target);
-    setMonth(getMonthStart(target));
-    // 월이 바뀌어 새 버튼이 마운트된 다음 포커스를 옮긴다.
-    requestAnimationFrame(() => dateButtons.current.get(getDateKey(target))?.focus());
-  };
+  const {
+    month,
+    weeks,
+    selectedKey,
+    tabDateKey,
+    headingId,
+    hasPreviousMonth,
+    hasNextMonth,
+    hasDisabledDate,
+    setFocusedDate,
+    handleMonthChange,
+    handleDateKeyDown,
+    setDateButton,
+  } = useDatePicker({
+    value: valueString,
+    defaultMonth,
+    minDate: minDateString,
+    maxDate: maxDateString,
+  });
 
   return (
     <div
@@ -142,46 +79,34 @@ export const DatePicker = ({
           )}
         >
           <span className='sr-only'>{ariaLabel} </span>
-          {getMonthLabel(month)}
+          {datePickerUtils.getMonthLabel(month)}
         </span>
         <div className='flex gap-[1.2rem]'>
-          <button
-            type='button'
+          <IconButton
             aria-label='이전 달'
-            disabled={disabled || !hasAvailableMonth(-1)}
+            disabled={disabled || !hasPreviousMonth}
             onClick={() => handleMonthChange(-1)}
-            className={cn(
-              FOCUS_CLASS_NAME,
-              GLASS_CLASS_NAME,
-              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 backdrop-blur-[0.4rem] disabled:cursor-not-allowed disabled:opacity-40',
-            )}
-          >
-            <BackIcon width={20} height={20} aria-hidden='true' focusable='false' />
-          </button>
-          <button
-            type='button'
+            icon={<BackIcon className='size-[2rem]' focusable='false' />}
+            className={cn(GLASS_CLASS_NAME, 'size-[2rem] bg-bg-primary/40 backdrop-blur-[0.4rem]')}
+          />
+          <IconButton
             aria-label='다음 달'
-            disabled={disabled || !hasAvailableMonth(1)}
+            disabled={disabled || !hasNextMonth}
             onClick={() => handleMonthChange(1)}
-            className={cn(
-              FOCUS_CLASS_NAME,
-              GLASS_CLASS_NAME,
-              'flex size-[2rem] cursor-pointer items-center justify-center rounded-full bg-bg-primary/40 backdrop-blur-[0.4rem] disabled:cursor-not-allowed disabled:opacity-40',
-            )}
-          >
-            <NextIcon width={20} height={20} aria-hidden='true' focusable='false' />
-          </button>
+            icon={<NextIcon className='size-[2rem]' focusable='false' />}
+            className={cn(GLASS_CLASS_NAME, 'size-[2rem] bg-bg-primary/40 backdrop-blur-[0.4rem]')}
+          />
         </div>
       </div>
       <table role='grid' aria-labelledby={headingId} className='w-full table-fixed border-collapse'>
         <thead>
           <tr>
-            {WEEKDAY_LABELS.map((label, weekday) => (
+            {datePickerUtils.WEEKDAY_LABELS.map((label, weekday) => (
               <th
                 key={label}
                 scope='col'
-                aria-label={`${WEEKDAYS[weekday]}요일`}
-                className='h-[2.6rem] pb-[0.6rem] text-center caption-rg-10 text-[0.7rem] font-medium text-text-white/70'
+                aria-label={`${datePickerUtils.WEEKDAYS[weekday]}요일`}
+                className='h-[2.6rem] pb-[0.6rem] text-center caption-md-7 text-text-white/70'
               >
                 {label}
               </th>
@@ -195,32 +120,23 @@ export const DatePicker = ({
                 <td
                   key={dateKey}
                   aria-selected={date ? dateKey === selectedKey : undefined}
-                  aria-disabled={
-                    date ? disabled || !hasSelectableDate(date, minDate, maxDate) : undefined
-                  }
+                  aria-disabled={date ? disabled || hasDisabledDate(date) : undefined}
                   className='h-[2.5rem] p-0 text-center [tr:last-child_&]:h-[2rem]'
                 >
                   {date ? (
                     <button
-                      ref={(element) => {
-                        if (element) {
-                          dateButtons.current.set(dateKey, element);
-                          return;
-                        }
-                        dateButtons.current.delete(dateKey);
-                      }}
+                      ref={(element) => setDateButton(dateKey, element)}
                       type='button'
                       tabIndex={dateKey === tabDateKey ? 0 : -1}
-                      aria-label={`${date.getUTCFullYear()}년 ${date.getUTCMonth() + 1}월 ${date.getUTCDate()}일 ${WEEKDAYS[date.getUTCDay()]}요일`}
-                      disabled={disabled || !hasSelectableDate(date, minDate, maxDate)}
+                      aria-label={datePickerUtils.getDateLabel(date)}
+                      disabled={disabled || hasDisabledDate(date)}
                       onFocus={() => setFocusedDate(date)}
-                      onClick={() => onChange(getDateKey(date))}
+                      onClick={() => onChange(datePickerUtils.getDateKey(date))}
                       onKeyDown={(event) => handleDateKeyDown(event, date)}
                       className='group/date flex w-full cursor-pointer items-center justify-center rounded-full focus-visible:outline-none disabled:cursor-not-allowed'
                     >
                       <span
                         className={cn(
-                          FOCUS_CLASS_NAME,
                           'flex size-[2rem] items-center justify-center rounded-full caption-rg-10',
                           dateKey === selectedKey
                             ? 'bg-text-white text-bg-primary group-disabled/date:text-bg-primary/50'

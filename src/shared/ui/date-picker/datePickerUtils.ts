@@ -76,3 +76,56 @@ export const getMonthWeeks = (month: Date) => {
     }),
   }));
 };
+
+const getValidDate = (value?: string | null) => {
+  if (!value) return null;
+  try {
+    return parseDate(value);
+  } catch {
+    return null;
+  }
+};
+
+export const getDatePickerDates = (
+  valueString: string | null,
+  defaultMonth: string,
+  minDateString?: string,
+  maxDateString?: string,
+) => {
+  const value = getValidDate(valueString);
+  const supportedMin = createDate(1, 0, 1);
+  const supportedMax = createDate(9999, 11, 31);
+  const requestedMin = getValidDate(minDateString) ?? supportedMin;
+  const requestedMax = getValidDate(maxDateString) ?? supportedMax;
+  const hasReversedRange = requestedMin > requestedMax;
+  return {
+    value,
+    initialMonth: getValidDate(defaultMonth) ?? value ?? createDate(1970, 0, 1),
+    minDate: hasReversedRange ? supportedMin : requestedMin,
+    maxDate: hasReversedRange ? supportedMax : requestedMax,
+  };
+};
+
+export const hasAvailableMonth = (month: Date, direction: number, minDate: Date, maxDate: Date) => {
+  const candidate = shiftMonth(month, direction);
+  const first = getMonthStart(candidate);
+  const last = createDate(candidate.getUTCFullYear(), candidate.getUTCMonth() + 1, 0);
+  return last >= minDate && first <= maxDate;
+};
+
+export const getKeyboardDate = (date: Date, key: string, shiftKey = false) => {
+  const movements: Record<string, () => Date> = {
+    ArrowLeft: () => shiftDate(date, -1),
+    ArrowRight: () => shiftDate(date, 1),
+    ArrowUp: () => shiftDate(date, -7),
+    ArrowDown: () => shiftDate(date, 7),
+    Home: () => shiftDate(date, -date.getUTCDay()),
+    End: () => shiftDate(date, 6 - date.getUTCDay()),
+    PageUp: () => shiftMonth(date, shiftKey ? -12 : -1),
+    PageDown: () => shiftMonth(date, shiftKey ? 12 : 1),
+  };
+  return Object.hasOwn(movements, key) ? movements[key]() : null;
+};
+
+export const getDateLabel = (date: Date) =>
+  `${date.getUTCFullYear()}년 ${date.getUTCMonth() + 1}월 ${date.getUTCDate()}일 ${WEEKDAYS[date.getUTCDay()]}요일`;
