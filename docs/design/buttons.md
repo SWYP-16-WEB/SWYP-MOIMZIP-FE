@@ -2,13 +2,13 @@
 
 공용 버튼은 `@/shared/ui`에서 가져옵니다. `ButtonBase`는 네이티브 `button`만 감싸며 기본 `type`은 `button`입니다. 폼 제출에는 `type='submit'`을 명시합니다. 네이티브 속성, 이벤트, `ref`, `className`을 전달할 수 있습니다.
 
-| 컴포넌트             | 주요 props                       | 용도                                                                |
-| -------------------- | -------------------------------- | ------------------------------------------------------------------- |
-| `Button`             | `size: 'large' \| 'small'`       | 기본 CTA. 크기는 패딩으로 구분하며 너비는 사용하는 화면에서 지정    |
-| `TextButton`         | `variant: 'secondary' \| 'lime'` | 각각 `brand-secondary`, `brand-lime` 컬러 토큰을 사용하는 짧은 동작 |
-| `LinkButton`         | `href`, `target`, `rel`          | 화살표가 있는 외부 링크                                             |
-| `IconButton`         | `aria-label`, `icon`, `selected` | 임의의 아이콘 React 요소를 받는 원형 버튼                           |
-| `SelectionIndicator` | `selected`, `className`          | `CheckIcon`과 토큰 기반 원형 배경으로 표시하는 장식용 선택 상태     |
+| 컴포넌트             | 주요 props                                                       | 용도                                                                |
+| -------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `Button`             | `size: 'large' \| 'small'`                                       | 기본 CTA. 크기는 패딩으로 구분하며 너비는 사용하는 화면에서 지정    |
+| `TextButton`         | `variant: 'secondary' \| 'lime'`                                 | 각각 `brand-secondary`, `brand-lime` 컬러 토큰을 사용하는 짧은 동작 |
+| `LinkButton`         | `href`, `target`, `rel`                                          | 화살표가 있는 외부 링크                                             |
+| `IconButton`         | `aria-label`, `icon`, `variant: 'filled' \| 'plain'`, `selected` | 임의의 아이콘 React 요소를 받는 버튼. `plain`은 배경 없음           |
+| `SelectionIndicator` | `selected`, `className`                                          | `CheckIcon`과 토큰 기반 원형 배경으로 표시하는 장식용 선택 상태     |
 
 ## 버튼 크기와 스타일 덮어쓰기
 
@@ -37,6 +37,19 @@ import { IconButton } from '@/shared/ui';
 ```
 
 `selected`를 우선 사용하고, 생략하면 `aria-pressed`의 boolean·문자열 값을 선택 표시에도 반영합니다. 접근성 상태와 배경색에 같은 기준을 사용합니다. 아이콘은 장식으로 처리하고 버튼 이름은 필수 `aria-label`로 전달합니다.
+
+### 배경 없는 아이콘 버튼 (`variant='plain'`)
+
+지우기(X), 뒤로가기처럼 배경 없이 아이콘만 있는 버튼은 `variant='plain'`을 사용합니다. 기본값은 원형 배경이 있는 `filled`입니다. `selected`는 `filled`의 배경색에만 반영되므로, 토글이 아닌 단순 동작 버튼에는 전달하지 않습니다.
+
+```tsx
+import { BackIcon, SmallXIcon } from '@/shared/assets';
+import { IconButton } from '@/shared/ui';
+
+<IconButton variant='plain' aria-label='이름 지우기' icon={<SmallXIcon />} onClick={handleClear} />;
+
+<IconButton variant='plain' aria-label='뒤로 가기' icon={<BackIcon />} onClick={handleBack} />;
+```
 
 ## 생성 화면 전용 카드
 
