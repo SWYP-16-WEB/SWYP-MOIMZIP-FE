@@ -70,12 +70,14 @@ const writeIfChanged = async (path: string, content: string) => {
 
 // 폴더를 통째로 삭제하지 않고, 원본에서 제거된 생성 아이콘만 정리한다.
 const removeStaleIcons = async (icons: GeneratedIcon[]) => {
-  const expectedFiles = new Set(icons.map(({ componentName }) => `${componentName}.tsx`));
+  const expectedFiles = new Set(
+    icons.map(({ componentName }) => `${componentName}.tsx`.toLowerCase()),
+  );
   const files = await readdir(ICON_DIR);
   await Promise.all(
     files
       .filter(
-        (file) => /^(?:Icon|[A-Z][A-Za-z0-9]*Icon)\.tsx$/.test(file) && !expectedFiles.has(file),
+        (file) => /^[A-Za-z0-9]*Icon\.tsx$/.test(file) && !expectedFiles.has(file.toLowerCase()),
       )
       .map(async (file) => {
         const path = join(ICON_DIR, file);
