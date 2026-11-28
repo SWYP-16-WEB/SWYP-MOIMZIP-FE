@@ -59,9 +59,32 @@ const formatWithPrettier = async (code: string, filePath: string) => {
   return prettier.format(code, { ...projectPrettierConfig, parser: 'typescript' });
 };
 
-const resetIconDir = async () => {
-  await rm(ICON_DIR, { recursive: true, force: true });
-  await mkdir(ICON_DIR, { recursive: true });
+const writeIfChanged = async (path: string, content: string) => {
+  const previous = await readFile(path, 'utf-8').catch((error: NodeJS.ErrnoException) => {
+    if (error.code === 'ENOENT') return null;
+    throw error;
+  });
+  if (previous === content) return;
+  await writeFile(path, content, 'utf-8');
+};
+
+// 폴더를 통째로 삭제하지 않고, 원본에서 제거된 생성 아이콘만 정리한다.
+const removeStaleIcons = async (icons: GeneratedIcon[]) => {
+  const expectedFiles = new Set(
+    icons.map(({ componentName }) => `${componentName}.tsx`.toLowerCase()),
+  );
+  const files = await readdir(ICON_DIR);
+  await Promise.all(
+    files
+      .filter(
+        (file) => /^[A-Za-z0-9]*Icon\.tsx$/.test(file) && !expectedFiles.has(file.toLowerCase()),
+      )
+      .map(async (file) => {
+        const path = join(ICON_DIR, file);
+        const content = await readFile(path, 'utf-8');
+        if (content.startsWith(HEADER_COMMENT)) await rm(path);
+      }),
+  );
 };
 
 const generateIconComponent = async (file: string): Promise<GeneratedIcon> => {
@@ -101,7 +124,7 @@ const generateIconComponent = async (file: string): Promise<GeneratedIcon> => {
     /(from 'react';\n)(?!\n)/,
     '$1\n',
   );
-  await writeFile(outputPath, `${HEADER_COMMENT}\n${formatted}`, 'utf-8');
+  await writeIfChanged(outputPath, `${HEADER_COMMENT}\n${formatted}`);
 
   return { file, componentName };
 };
@@ -123,7 +146,7 @@ const generateIndexFile = async (icons: GeneratedIcon[]) => {
     '',
   ].join('\n');
 
-  await writeFile(INDEX_FILE, await formatWithPrettier(rawContent, INDEX_FILE), 'utf-8');
+  await writeIfChanged(INDEX_FILE, await formatWithPrettier(rawContent, INDEX_FILE));
 };
 
 const generate = async () => {
@@ -145,9 +168,10 @@ const generate = async () => {
       throw new Error(`컴포넌트 이름이 중복됩니다: ${[...new Set(duplicated)].join(', ')}`);
     }
 
-    await resetIconDir();
+    await mkdir(ICON_DIR, { recursive: true });
     const icons = await Promise.all(svgFiles.map(generateIconComponent));
     await generateIndexFile(icons);
+    await removeStaleIcons(icons);
 
     console.info(`✅ SVG ${icons.length}개를 React 컴포넌트로 변환했습니다.`);
   } catch (error) {

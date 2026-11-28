@@ -14,6 +14,7 @@ const mergeClasses = extendTailwindMerge<'typography'>({
         'caption-rg-12',
         'caption-sb-12',
         'caption-rg-10',
+        'caption-md-7',
       ],
     },
     conflictingClassGroups: {
