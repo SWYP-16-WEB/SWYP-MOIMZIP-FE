@@ -1,13 +1,14 @@
 # 입력 컴포넌트
 
-공용 입력 컴포넌트는 `@/shared/ui`에서 가져옵니다. 모든 입력칸은 같은 폴더의 `InputBase`를 기반으로 하며, 네이티브 `input` 속성·이벤트·`ref`를 그대로 전달할 수 있습니다. `InputBase`는 입력칸끼리 공유하는 내부 기반이라 외부에 공개하지 않습니다.
+공용 입력 컴포넌트는 `@/shared/ui`에서 가져옵니다. 한 줄 입력칸은 같은 폴더의 `InputBase`를 기반으로 하며, 네이티브 `input` 속성·이벤트·`ref`를 그대로 전달할 수 있습니다. 여러 줄로 늘어나는 `TextFieldInput`은 `textarea`를 사용하며 네이티브 `textarea` 속성을 전달합니다. `InputBase`는 입력칸끼리 공유하는 내부 기반이라 외부에 공개하지 않습니다.
 
-| 컴포넌트         | Figma              | 주요 props         | 용도                                     |
-| ---------------- | ------------------ | ------------------ | ---------------------------------------- |
-| `FilledInput`    | `Input_Color`      | `invalid`          | 어두운 배경 위의 배경이 채워진 입력칸    |
-| `InfoField`      | `InfoField`        | `label`, `value`   | 라벨과 값을 보여주는 읽기 전용 정보 칸   |
-| `InfoFieldInput` | `InfoField_Button` | `label`, `onClear` | 라벨이 붙은 수정용 정보 칸 (지우기 버튼) |
-| `LineInput`      | `Input_Line`       | `action`           | 흰 배경(초대장 카드) 위의 테두리 입력칸  |
+| 컴포넌트         | Figma              | 주요 props           | 용도                                     |
+| ---------------- | ------------------ | -------------------- | ---------------------------------------- |
+| `TextFieldInput` | `Input_Line_Black` | `value`, `maxLength` | 글자 수 카운터가 있는 여러 줄 입력칸     |
+| `FilledInput`    | `Input_Color`      | `invalid`            | 어두운 배경 위의 배경이 채워진 입력칸    |
+| `InfoField`      | `InfoField`        | `label`, `value`     | 라벨과 값을 보여주는 읽기 전용 정보 칸   |
+| `InfoFieldInput` | `InfoField_Button` | `label`, `onClear`   | 라벨이 붙은 수정용 정보 칸 (지우기 버튼) |
+| `LineInput`      | `Input_Line`       | `action`             | 흰 배경(초대장 카드) 위의 테두리 입력칸  |
 
 ## 공통 규칙
 
@@ -125,8 +126,49 @@ import { IconButton, LineInput } from '@/shared/ui';
 />;
 ```
 
+## TextFieldInput
+
+어두운 배경 위에서 쓰는 테두리 입력칸으로, 오른쪽 아래에 `{현재 글자 수} / {maxLength}자` 카운터가 붙습니다. 카운터와 높이를 계산해야 하므로 `value`와 `maxLength`가 필수이며, 값을 관리하는 `'use client'` 컴포넌트에서 사용합니다.
+
+- 처음에는 한 줄 높이(3.7rem)이고, 글이 길어져 줄이 넘어가거나 줄을 바꾸면 아래로 늘어납니다. 높이는 CSS로 계산하므로 별도 스크립트가 없습니다.
+- `textarea`라 Enter로 줄을 바꿀 수 있습니다. 제목처럼 줄바꿈을 막아야 하면 사용하는 쪽에서 `onKeyDown`으로 Enter를 막습니다.
+- `maxLength`는 `textarea`에도 그대로 전달되어 최대 글자 수를 넘겨 입력할 수 없습니다.
+- 카운터는 화면 표시용이라 스크린리더에서 읽지 않습니다(`aria-hidden`). 글자 수 제한은 `maxLength`로 전달됩니다.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+
+import { TextFieldInput } from '@/shared/ui';
+
+export const ReminderTitleField = () => {
+  const [title, setTitle] = useState('');
+
+  return (
+    <TextFieldInput
+      aria-label='리마인드 제목'
+      placeholder='제목: 모임 일정 리마인드'
+      maxLength={28}
+      value={title}
+      onChange={(event) => setTitle(event.target.value)}
+    />
+  );
+};
+```
+
+```tsx
+// 여러 줄 메시지: 줄바꿈 포함, 내용만큼 아래로 늘어납니다.
+<TextFieldInput
+  aria-label='리마인드 메시지'
+  maxLength={81}
+  value={message}
+  onChange={(event) => setMessage(event.target.value)}
+/>
+```
+
 ## 미정 사항
 
 - 포커스 상태: 시안에 없어 입력칸 모양은 바뀌지 않고 커서만 표시됩니다. 디자인이 정해지면 `focus-visible:` 스타일을 추가합니다.
-- `LineInput`의 에러 모양: 시안에 없어 `invalid`를 전달해도 `aria-invalid`만 붙습니다.
+- `LineInput`·`TextFieldInput`의 에러 모양: 시안에 없어 `invalid`를 전달해도 `aria-invalid`만 붙습니다.
 - 라벨·필수 표시·에러 문구·글자 수 카운터를 묶은 입력 필드(`Input_Line/Header_1` 등)는 이 컴포넌트들을 조합해 별도로 구현합니다.
